@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Υπολογισμός Μέσου Όρου</title>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+   <img src="https://fv5-5.files.fm/thumb_show.php?i=99z753jq7c&view&v=1&PHPSESSID=7d1826158041438b2b0a1f9da5947154b2a6af68" alt="Λογότυπο" class="logo">
+
+   <div class="container">
+     <h2>Τι κατεύθυνση είσαι;</h2>
+     <select id="direction" onchange="showFields()">
+       <option value="">-- Επιλέξτε --</option>
+       <option value="theoritiki">1) Θεωρητική</option>
+       <option value="thetiki">2) Θετική</option>
+     </select>
+
+     <form id="gradesForm" class="hidden" onsubmit="calculateAverage(event)">
+       <div id="commonFields"></div>
+       <div id="orientationFields"></div>
+       <button type="submit">Υπολογισμός</button>
+     </form>
+
+     <h3 id="result"></h3>
+   </div>
+
+<script>
+  const commonSubjects = [
+    "Αρχαία Ελληνική Γλώσσα και Γραμματεία",
+    "Νεοελληνική Γλώσσα και Λογοτεχία",
+    "Άλγεβρα",
+    "Γεωμετρία",
+    "Φυσική",
+    "Χημεία",
+    "Βιολογία",
+    "Εισαγωγή στις Αρχές της Επιστήμης των Η/Υ",
+    "Ιστορία",
+    "Φιλοσοφία",
+    "Θρησκευτικά",
+    "Φυσική Αγωγή",
+    "Αγγλικά",
+    "Γερμανικά"
+  ];
+
+  const orientationSubjects = {
+    theoritiki: [
+      "Αρχαία Ελληνική Γλώσσα και Γραμματεία Προσανατολισμού",
+      "Λατινικά Προσανατολισμού"
+    ],
+    thetiki: [
+      "Φυσική Προσανατολισμού",
+      "Μαθηματικά Προσανατολισμού"
+    ]
+  };
+
+  function showFields() {
+    const direction = document.getElementById("direction").value;
+    const form = document.getElementById("gradesForm");
+    const commonDiv = document.getElementById("commonFields");
+    const orientationDiv = document.getElementById("orientationFields");
+
+    if (!direction) {
+      form.classList.add("hidden");
+      return;
+    }
+
+    commonDiv.innerHTML = "";
+    orientationDiv.innerHTML = "";
+    form.classList.remove("hidden");
+
+    commonSubjects.forEach((subject, index) => {
+      commonDiv.innerHTML += `
+        <label>${subject}:</label>
+        <input type="number" name="va${index + 1}" required min="0" max="20">
+      `;
+    });
+
+    orientationSubjects[direction].forEach((subject, i) => {
+      const fieldNum = commonSubjects.length + i + 1;
+      orientationDiv.innerHTML += `
+        <label>${subject}:</label>
+        <input type="number" name="va${fieldNum}" required min="0" max="20">
+      `;
+    });
+  }
+
+  function calculateAverage(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const grades = Array.from(formData.values()).map(Number);
+
+    const va1 = grades[0], va2 = grades[1], va3 = grades[2], va4 = grades[3];
+    const va5 = grades[4], va6 = grades[5], va7 = grades[6];
+    const sym1 = (va1 + va2) / 2;
+    const sym2 = (va3 + va4) / 2;
+    const sym3 = (va5 + va6 + va7) / 3;
+
+    const restGrades = grades.slice(7);
+    const sum = sym1 + sym2 + sym3 + restGrades.reduce((a, b) => a + b, 0);
+    const meso = sum / 12;
+
+    document.getElementById("result").textContent = `Ο μέσος όρος σας είναι ${meso.toFixed(1)}`;
+  }
+</script>
+
+</body>
+</html>
+
+
